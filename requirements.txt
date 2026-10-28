@@ -1,0 +1,46 @@
+# ============================================================
+# Pneumonia Detection -- Project Requirements
+# Python 3.12 | PyTorch 2.11.0+cu126 (already installed in venv)
+# ============================================================
+# NOTE: torch and torchvision are intentionally EXCLUDED here.
+# Install them separately using the CUDA index URL:
+#   pip install torch==2.11.0+cu126 torchvision==0.26.0+cu126 \
+#       --index-url https://download.pytorch.org/whl/cu126
+
+# -- Data Science Core
+numpy>=1.26
+pandas>=2.0
+scipy>=1.11
+scikit-learn>=1.4
+
+# -- Image Processing
+Pillow>=10.0
+opencv-python>=4.8
+
+# -- Visualization
+matplotlib>=3.7
+seaborn>=0.13
+
+# -- Deep Learning Utilities
+timm>=1.0
+einops>=0.7
+
+# -- Explainability
+grad-cam>=1.5
+
+# -- Experiment Tracking and Config
+PyYAML>=6.0
+tqdm>=4.65
+
+# -- System / Utilities
+psutil>=5.9
+
+# -- Local browser UI and API
+fastapi>=0.110
+uvicorn>=0.27
+python-multipart>=0.0.9
+
+# -- Reproducibility / Dev
+ipykernel>=6.29
+ipywidgets>=8.0
+httpx>=0.24

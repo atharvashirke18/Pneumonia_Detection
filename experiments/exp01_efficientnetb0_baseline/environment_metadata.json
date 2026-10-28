@@ -1,0 +1,53 @@
+{
+  "python_version": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "torch_version": "2.11.0+cu126",
+  "cuda_available": true,
+  "cuda_version": "12.6",
+  "cudnn_version": 91002,
+  "timm_version": "1.0.30",
+  "timestamp": "2026-10-11 06:34:48 UTC",
+  "cuda_device_name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+  "cuda_total_memory_gb": 6.0,
+  "model_architecture": "efficientnet_b0",
+  "num_classes": 1,
+  "parameters": {
+    "total": 4008829,
+    "trainable": 4008829,
+    "frozen": 0
+  },
+  "pretrained_cfg": {
+    "url": "https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-weights/efficientnet_b0_ra-3dd342df.pth",
+    "hf_hub_id": "timm/efficientnet_b0.ra_in1k",
+    "architecture": "efficientnet_b0",
+    "tag": "ra_in1k",
+    "custom_load": false,
+    "input_size": [
+      3,
+      224,
+      224
+    ],
+    "fixed_input_size": false,
+    "interpolation": "bicubic",
+    "crop_pct": 0.875,
+    "crop_mode": "center",
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "num_classes": 1000,
+    "pool_size": [
+      7,
+      7
+    ],
+    "first_conv": "conv_stem",
+    "classifier": "classifier",
+    "license": "apache-2.0"
+  }
+}

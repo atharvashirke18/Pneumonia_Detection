@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Experiment Results — PneumoLens</title>
+<link rel="stylesheet" href="/css/theme.css"/></head>
+<body>
+<nav class="nav"><div class="container nav-inner">
+  <a href="/" class="nav-brand" style="color:inherit;text-decoration:none"><div class="icon">🫁</div><span>PneumoLens</span></a>
+  <div class="nav-links"><a href="/" class="nav-link">Detect</a><a href="/experiments.html" class="nav-link active">Experiments</a></div>
+  <span class="nav-pill">Research and education only</span>
+</div></nav>
+
+<main class="container xp">
+  <header class="xp-hero">
+    <div class="crumb">EfficientNetB0 · internal validation split · n = 518</div>
+    <h1>Experiment results</h1>
+    <p>Every number comes from a saved research artifact. The official test set was not accessed and no thresholds were changed. Click any point, bar or cell in a chart to inspect that case.</p>
+  </header>
+
+  <nav class="tabs" id="tabs" aria-label="Experiments">
+    <button class="tab-btn active" data-tab="01"><small>01</small>Baseline</button>
+    <button class="tab-btn" data-tab="2a"><small>2A</small>Grad-CAM audit</button>
+    <button class="tab-btn" data-tab="2b"><small>2B</small>Sensitivity</button>
+  </nav>
+
+  <!-- 01 · Baseline -->
+  <section class="pane active" id="pane-01"><div class="xp-charts">
+    <div class="kpis" id="kpis-01">
+      <div class="kpi gauge" style="--kc:var(--c1)"><div class="l">ROC-AUC</div><div class="chart loading" id="g-auc"></div></div>
+      <div class="kpi gauge" style="--kc:var(--c2)"><div class="l">Sensitivity</div><div class="chart loading" id="g-sens"></div></div>
+      <div class="kpi gauge" style="--kc:var(--c3)"><div class="l">Specificity</div><div class="chart loading" id="g-spec"></div></div>
+      <div class="kpi gauge" style="--kc:var(--c4)"><div class="l">F1 score</div><div class="chart loading" id="g-f1"></div></div>
+      <div class="kpi" style="--kc:var(--c5)"><div class="l">Val loss · best</div><div class="v" id="k-loss">—</div><div class="s">BCE with logits, minimum over 14 epochs</div></div>
+      <div class="kpi" style="--kc:var(--c1)"><div class="l">Best checkpoint</div><div class="v" id="k-epoch">—</div><div class="s">epoch (0-indexed) · threshold fixed at 0.5</div></div>
+    </div>
+    <div class="cc span-8"><div class="cc-head"><div><h3>Training history</h3><div class="sub">Drag the slider or scroll to zoom. The dashed line marks the best checkpoint (minimum validation loss).</div></div>
+      <div class="seg" id="seg-train"><button data-v="loss" class="on">Loss</button><button data-v="loss-log">Loss (log)</button><button data-v="auc">AUC</button><button data-v="f1">F1</button><button data-v="ss">Sens / Spec</button></div></div>
+      <div class="chart h-lg loading" id="c-train"></div></div>
+    <div class="cc span-4"><div class="cc-head"><div><h3>Confusion matrix</h3><div class="sub">Best checkpoint on the validation split, threshold 0.5. Rates are per actual class.</div></div></div>
+      <div class="chart h-lg loading" id="c-cm"></div></div>
+    <div class="cc span-6"><div class="cc-head"><div><h3>Sensitivity–specificity trajectory</h3><div class="sub">One point per epoch, purple → teal as training proceeds. Closer to the top-right corner is better.</div></div></div>
+      <div class="chart h-md loading" id="c-traj"></div></div>
+    <div class="cc span-6"><div class="cc-head"><div><h3>Learning-rate schedule &amp; epoch time</h3><div class="sub">Cosine-style decay; epoch time stays near 95–105 s after warm-up.</div></div></div>
+      <div class="chart h-md loading" id="c-lr"></div></div>
+  </div></section>
+
+  <!-- 2A · Grad-CAM audit -->
+  <section class="pane" id="pane-2a"><div class="xp-split">
+    <div class="xp-charts">
+      <div class="kpis" id="kpis-2a"></div>
+      <div class="cc span-6"><div class="cc-head"><div><h3>Border vs inner activation</h3><div class="sub">Every point sits below the diagonal: border cells carry more activation than the inner region. Marker size = P(pneumonia).</div></div>
+        <div class="seg" id="seg-sc"><button data-v="ups" class="on">Upsampled 22 px</button><button data-v="nat">Native 7×7</button></div></div>
+        <div class="chart h-lg loading" id="c-scatter"></div></div>
+      <div class="cc span-6"><div class="cc-head"><div><h3>Border-to-inner ratio</h3><div class="sub">Hatched bars are undefined: inner activation is exactly zero on the native grid.</div></div>
+        <div class="seg" id="seg-ratio"><button data-v="ups" class="on">Upsampled</button><button data-v="nat">Native (log)</button></div></div>
+        <div class="chart h-lg loading" id="c-ratio"></div></div>
+      <div class="cc span-6"><div class="cc-head"><div><h3>Where the CAM energy sits</h3><div class="sub">Share of native 7×7 activation in the 24 border cells vs the 25 inner cells.</div></div></div>
+        <div class="chart h-lg loading" id="c-energy"></div></div>
+      <div class="cc span-6"><div class="cc-head"><div><h3>Where the CAM peaks</h3><div class="sub">Location of the strongest native cell. Amber outline = border ring. Hover a cell to list its cases.</div></div></div>
+        <div class="chart h-lg loading" id="c-peak"></div></div>
+      <div class="alert alert-warning span-12" style="grid-column:1/-1;margin-top:0"><span class="alert-icon">⚠️</span><span>The upsampled border-to-inner ratio is above 1 in every example (about 1.06 to 2.96), across TP, TN, FP and FN. This informed the Experiment 2B design.</span></div>
+    </div>
+    <div class="insp-slot" id="slot-2a"></div>
+  </div></section>
+
+  <!-- 2B · Sensitivity -->
+  <section class="pane" id="pane-2b"><div class="xp-split">
+    <div class="xp-charts">
+      <div class="kpis" id="kpis-2b"></div>
+      <div class="cc span-6"><div class="cc-head"><div><h3>|ΔP| heatmap · 16 cases × 3 perturbations</h3><div class="sub">★ marks a prediction flip. Click a row to inspect the case.</div></div>
+        <div class="seg" id="seg-order"><button data-v="case" class="on">Case order</button><button data-v="sens">Most sensitive first</button></div></div>
+        <div class="chart h-xl loading" id="c-heat"></div></div>
+      <div class="cc span-6"><div class="cc-head"><div><h3>Before → after</h3><div class="sub">Lines crossing the dashed threshold are flips. Thick lines are flips; shapes mark the outcome.</div></div>
+        <div class="seg" id="seg-cond"><button data-v="border_black" class="on">Border</button><button data-v="central_black">Central</button><button data-v="gamma_dark">Gamma</button></div></div>
+        <div class="chart h-xl loading" id="c-slope"></div></div>
+      <div class="cc span-6"><div class="cc-head"><div><h3>Perturbation profile</h3><div class="sub">Rates are out of 16. Central blackout dominates on every axis.</div></div></div>
+        <div class="chart h-md loading" id="c-radar"></div></div>
+      <div class="cc span-6"><div class="cc-head"><div><h3>|ΔP| distribution</h3><div class="sub">Each marker is one case (jittered horizontally); dashed line = median. Outlined markers flipped.</div></div></div>
+        <div class="chart h-md loading" id="c-strip"></div></div>
+      <div class="alert alert-warning span-12" style="grid-column:1/-1;margin-top:0"><span class="alert-icon">⚠️</span><span><strong>Pilot caveat:</strong> n = 16, feasibility only. Central blackout causes more flips and larger mean |ΔP| than border blackout, which is inconsistent with a simple border-shortcut hypothesis. Do not generalise.</span></div>
+    </div>
+    <div class="insp-slot" id="slot-2b"></div>
+  </div></section>
+</main>
+
+<!-- shared case inspector: moved into whichever pane is active -->
+<aside class="insp" id="insp" hidden>
+  <div class="insp-top"><h3><span id="i-title">Case</span><span class="pill" id="i-pill"></span></h3>
+    <div class="nav-step"><button id="i-prev" aria-label="Previous case">‹</button><button id="i-next" aria-label="Next case">›</button></div></div>
+  <div class="rail" id="i-rail"></div>
+  <div class="insp-mode"><div class="seg" id="i-mode"></div><span class="mono" id="i-p" style="font-size:.78rem;color:var(--text-muted)"></span></div>
+  <div class="tiles" id="i-tiles"></div>
+  <dl class="facts" id="i-facts"></dl>
+  <p class="hint"><kbd>←</kbd> <kbd>→</kbd> step through cases · click an image to enlarge</p>
+</aside>
+
+<dialog class="lb" id="lb"><header><span id="lb-t"></span><button id="lb-x" aria-label="Close">✕</button></header><img id="lb-i" alt=""/></dialog>
+
+<script src="/js/vendor/echarts.min.js"></script>
+<script src="/js/charts.js"></script>
+<script src="/js/experiments.js"></script>
+</body></html>

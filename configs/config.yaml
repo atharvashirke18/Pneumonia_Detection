@@ -1,0 +1,112 @@
+# configs/config.yaml
+# Configuration for Pneumonia Detection Experiment 1 (EfficientNetB0 Baseline)
+
+project:
+  name: "Explainable_Robust_Pneumonia_Detection"
+  description: "Explainable, Uncertainty-Aware and Robust Pneumonia Detection from Chest X-Ray Images"
+  version: "0.1.0"
+  random_seed: 42
+  deterministic: true
+
+dataset:
+  # Root directory of the raw chest X-ray images
+  data_root: "data/chest_xray"
+  
+  # Directory where precomputed, audited manifests reside
+  manifests_dir: "data/manifests"
+  
+  # Exact manifest files for each split
+  manifest_files:
+    train: "train_manifest.csv"
+    val: "val_manifest.csv"
+    calibration: "calibration_manifest.csv"
+    test: "test_manifest.csv"
+    val_reference_16: "val_reference_16.csv"
+    duplicates: "duplicates_manifest.csv"
+
+  # Class mapping definition
+  classes:
+    NORMAL: 0
+    PNEUMONIA: 1
+
+preprocessing:
+  # Spatial dimensions (Height, Width)
+  image_size: [224, 224]
+  channels: 3
+  
+  # Color mode: ensure all images (grayscale or RGB) are converted to 3-channel RGB
+  color_mode: "RGB"
+  
+  # Pretrained backbone normalization (ImageNet standards used by timm EfficientNetB0)
+  normalization:
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+  
+  # Interpolation method for resizing (bicubic aligns with timm default_cfg)
+  interpolation: "bicubic"
+
+augmentation:
+  # Training-only augmentation policy (no augmentation on val, calibration, or test)
+  train:
+    horizontal_flip_prob: 0.5
+    rotation_degrees: 10
+    affine_translate: [0.05, 0.05]
+    affine_scale: [0.95, 1.05]
+    color_jitter:
+      brightness: 0.1
+      contrast: 0.1
+
+dataloader:
+  # Conservative batch size suited for 6 GB GPU VRAM with AMP
+  batch_size: 32
+  
+  # Windows-friendly num_workers (0 avoids Windows multiprocessing spawn overhead/deadlocks; 2 is feasible)
+  # Default to 0 for maximum stability on Windows systems
+  num_workers: 0
+  
+  # Memory pinning for faster CPU -> GPU CUDA transfer
+  pin_memory: true
+  
+  # Shuffling policy
+  shuffle:
+    train: true
+    val: false
+    calibration: false
+    test: false
+  
+  # Drop last batch for training loader to maintain consistent batch sizes
+  drop_last:
+    train: false
+    val: false
+
+system:
+  device: "cuda"  # "cuda" or "cpu"
+  mixed_precision: "fp16"  # "fp16" or "no"
+  cudnn_benchmark: false
+  cudnn_deterministic: true
+
+model:
+  architecture: "efficientnet_b0"
+  pretrained: true
+  num_classes: 1  # Single logit output with BCEWithLogitsLoss
+  dropout_rate: 0.2
+  in_chans: 3
+
+training:
+  # Hyperparameter settings for Experiment 1
+  output_dir: "experiments/exp01_efficientnetb0_baseline"
+  save_epoch_checkpoints: false
+  epochs: 15
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-4
+  optimizer: "adamw"
+  lr_scheduler: "cosine"
+  min_lr: 1.0e-6
+  warmup_epochs: 1
+  early_stopping:
+    patience: 5
+    metric: "val_loss"
+    mode: "min"
+  loss:
+    name: "bce_with_logits"
+    pos_weight: 1.0  # pos_weight=1.0 for initial baseline

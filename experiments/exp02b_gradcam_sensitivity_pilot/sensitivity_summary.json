@@ -1,0 +1,210 @@
+{
+  "experiment": "exp02b_gradcam_sensitivity_pilot",
+  "checkpoint_epoch": 8,
+  "param_sum_before_experiment": 340584.58304547006,
+  "n_examples": 16,
+  "parameters": {
+    "img_size": [
+      224,
+      224
+    ],
+    "threshold": 0.5,
+    "border_margin_px": 32,
+    "fill_value_u8": 0,
+    "central_side_px": 156,
+    "gamma_param": 0.85,
+    "imagenet_mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "imagenet_std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "conditions": [
+      "original",
+      "border_black",
+      "central_black",
+      "gamma_dark"
+    ],
+    "border_area_px": 24576,
+    "central_area_px": 24336,
+    "area_diff_pct": 0.98,
+    "round_trip_note": "Conditions 2-4 denormalize the dataset tensor to uint8 PIL, apply perturbation, then renormalize. Max per-channel quantization noise ~0.5/255 \u2248 0.002. The 'original' condition uses the exact dataset tensor to avoid this."
+  },
+  "by_condition": {
+    "border_black": {
+      "n": 16,
+      "n_flip": 4,
+      "mean_abs_delta": 0.257993,
+      "max_abs_delta": 0.973331,
+      "median_abs_delta": 0.104364,
+      "n_prob_increase": 10,
+      "n_prob_decrease": 0
+    },
+    "central_black": {
+      "n": 16,
+      "n_flip": 7,
+      "mean_abs_delta": 0.475278,
+      "max_abs_delta": 1.0,
+      "median_abs_delta": 0.333615,
+      "n_prob_increase": 12,
+      "n_prob_decrease": 0
+    },
+    "gamma_dark": {
+      "n": 16,
+      "n_flip": 1,
+      "mean_abs_delta": 0.073331,
+      "max_abs_delta": 0.540394,
+      "median_abs_delta": 0.007404,
+      "n_prob_increase": 7,
+      "n_prob_decrease": 1
+    }
+  },
+  "by_outcome_border_black": {
+    "TP": {
+      "n": 6,
+      "n_flip": 0,
+      "mean_abs_delta": 0.057636,
+      "examples": [
+        {
+          "ds_idx": 134,
+          "orig_prob": 1.0,
+          "border_prob": 1.0,
+          "border_delta": 0.0,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 138,
+          "orig_prob": 1.0,
+          "border_prob": 0.999995,
+          "border_delta": -5e-06,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 211,
+          "orig_prob": 0.773382,
+          "border_prob": 0.999996,
+          "border_delta": 0.226614,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 315,
+          "orig_prob": 0.789946,
+          "border_prob": 0.909144,
+          "border_delta": 0.119198,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 369,
+          "orig_prob": 1.0,
+          "border_prob": 1.0,
+          "border_delta": 0.0,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 402,
+          "orig_prob": 1.0,
+          "border_prob": 1.0,
+          "border_delta": 0.0,
+          "border_flip": 0
+        }
+      ]
+    },
+    "TN": {
+      "n": 6,
+      "n_flip": 2,
+      "mean_abs_delta": 0.29205,
+      "examples": [
+        {
+          "ds_idx": 0,
+          "orig_prob": 0.0,
+          "border_prob": 0.002979,
+          "border_delta": 0.002979,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 2,
+          "orig_prob": 0.268841,
+          "border_prob": 0.99763,
+          "border_delta": 0.728789,
+          "border_flip": 1
+        },
+        {
+          "ds_idx": 40,
+          "orig_prob": 0.0,
+          "border_prob": 0.206025,
+          "border_delta": 0.206025,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 43,
+          "orig_prob": 0.0,
+          "border_prob": 0.089531,
+          "border_delta": 0.089531,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 51,
+          "orig_prob": 0.0,
+          "border_prob": 0.004795,
+          "border_delta": 0.004795,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 123,
+          "orig_prob": 0.006667,
+          "border_prob": 0.726845,
+          "border_delta": 0.720178,
+          "border_flip": 1
+        }
+      ]
+    },
+    "FP": {
+      "n": 2,
+      "n_flip": 0,
+      "mean_abs_delta": 0.134087,
+      "examples": [
+        {
+          "ds_idx": 119,
+          "orig_prob": 0.738461,
+          "border_prob": 0.992199,
+          "border_delta": 0.253738,
+          "border_flip": 0
+        },
+        {
+          "ds_idx": 120,
+          "orig_prob": 0.985517,
+          "border_prob": 0.999953,
+          "border_delta": 0.014436,
+          "border_flip": 0
+        }
+      ]
+    },
+    "FN": {
+      "n": 2,
+      "n_flip": 2,
+      "mean_abs_delta": 0.880799,
+      "examples": [
+        {
+          "ds_idx": 241,
+          "orig_prob": 0.026669,
+          "border_prob": 1.0,
+          "border_delta": 0.973331,
+          "border_flip": 1
+        },
+        {
+          "ds_idx": 260,
+          "orig_prob": 0.211731,
+          "border_prob": 0.999999,
+          "border_delta": 0.788268,
+          "border_flip": 1
+        }
+      ]
+    }
+  },
+  "param_sum_after_experiment": 340584.58304547006,
+  "params_unchanged": true
+}

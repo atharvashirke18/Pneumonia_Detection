@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PneumoLens — Chest X-ray analysis</title>
+<link rel="stylesheet" href="/css/theme.css"/></head>
+<body>
+<nav class="nav"><div class="container nav-inner">
+  <a href="/" class="nav-brand" style="color:inherit;text-decoration:none"><div class="icon">🫁</div><span>PneumoLens</span></a>
+  <div class="nav-links"><a href="/" class="nav-link active">Detect</a><a href="/experiments.html" class="nav-link">Experiments</a></div>
+  <span class="nav-pill">Research and education only</span>
+</div></nav>
+
+<main class="container ix-main">
+  <div class="ix-head"><div><h1>Chest X-ray analysis</h1><p>Upload a radiograph. See the prediction and where the model looked.</p></div>
+    <button class="btn btn-primary" id="newBtn" type="button">Upload new image</button></div>
+  <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.bmp,.tif,.tiff" hidden/>
+
+  <!-- 1. Upload & Predict -->
+  <section class="card ix-card" id="uploadCard">
+    <div id="predictLoader" class="loader-overlay hidden"><div style="text-align:center"><div class="spinner" style="margin:0 auto"></div><p style="margin-top:.75rem">Analysing image…</p></div></div>
+    <div class="ix-title"><h2><span class="section-num">1</span>Upload &amp; Predict</h2><span class="tag">Prediction result</span></div>
+    <div class="s1">
+      <div class="drop" id="uploadZone" tabindex="0" role="button" aria-label="Choose an X-ray image">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+        <b>Drag and drop an X-ray image here</b><span style="font-size:.8rem;color:var(--text-muted)">or</span>
+        <button class="btn btn-primary" type="button" id="chooseBtn">Choose file</button>
+        <span style="font-size:.72rem;color:var(--text-muted)">PNG, JPG, BMP, TIFF · up to 15 MB · never written to disk</span>
+      </div>
+      <div class="preview"><div class="ph" id="prevPh">Preview</div><img id="prevImg" alt="Uploaded chest X-ray" hidden/><span class="mark hidden" id="prevMark">R</span></div>
+      <div class="res" id="resBox">
+        <div id="resEmpty"><div class="card-title">Model output</div><p style="margin-top:.5rem">Awaiting image upload. The prediction appears here.</p></div>
+        <div id="resContent" class="hidden" style="display:flex;flex-direction:column;gap:.9rem">
+          <div class="res-top"><div><div class="cls" id="clsName">—</div><p id="classFormula">P(PNEUMONIA | X)</p></div><span class="res-badge" id="predBadge">—</span></div>
+          <div><div class="card-title" style="margin:0">Pneumonia probability</div>
+            <div style="display:flex;align-items:baseline"><span class="big" id="probValue">—</span><span class="pct" id="probPct"></span></div></div>
+          <div><div class="bar"><i id="probBar"></i><b></b></div>
+            <div class="bar-lbl" style="margin-top:.5rem"><span>NORMAL</span><span>Decision threshold 0.5 (fixed)</span><span>PNEUMONIA</span></div></div>
+          <div class="callout"><span>ℹ️</span><span>A model prediction, not a diagnosis. The probability is not a calibrated estimate of disease likelihood.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Grad-CAM -->
+  <section class="card ix-card">
+    <div class="ix-title"><h2><span class="section-num">2</span>Grad-CAM Explanation</h2><span class="tag">7×7 native · 224×224 upsampled</span></div>
+    <div class="s2">
+      <div>
+        <div class="triple">
+          <div class="panel"><div class="lbl">Original image</div><div class="frame"><img id="imgOrig" alt="Original" hidden/><span class="mark">R</span></div></div>
+          <div class="panel"><div class="lbl">Grad-CAM heatmap (upsampled)</div>
+            <div class="heat-row"><div class="frame"><img id="imgHeat" alt="Heatmap" hidden/><span class="mark">R</span></div>
+              <div class="cbar"><span>1.0</span><i></i><span>0.0</span></div></div></div>
+          <div class="panel"><div class="lbl">Overlay</div><div class="frame"><img id="imgOver" alt="Overlay" hidden/><span class="mark">R</span></div></div>
+        </div>
+        <div class="callout" style="margin-top:1rem"><span>ℹ️</span><span>The native activation map is 7×7 and is upsampled to 224×224 for visualization. Highlighted areas show model-associated activation, not proven causal evidence or medical segmentation.</span></div>
+      </div>
+      <div class="details"><h3>Grad-CAM details</h3>
+        <table class="info-table" id="gradcamTable">
+          <tr><td>Target layer</td><td>backbone.conv_head</td></tr><tr><td>Native resolution</td><td>7 × 7</td></tr>
+          <tr><td>Upsampling</td><td>Bicubic (224 × 224)</td></tr><tr><td>Normalization</td><td>Min-max [0, 1]</td></tr>
+          <tr><td>ReLU</td><td>Applied (pre-upsampling)</td></tr></table></div>
+    </div>
+  </section>
+  <p class="fine">A model prediction, not a diagnosis. Highlights show model association, not causal evidence or medical segmentation.</p>
+</main>
+<script src="/js/main.js"></script>
+</body></html>

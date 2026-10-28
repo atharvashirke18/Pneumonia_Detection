@@ -1,0 +1,122 @@
+{
+  "project": {
+    "name": "Explainable_Robust_Pneumonia_Detection",
+    "description": "Explainable, Uncertainty-Aware and Robust Pneumonia Detection from Chest X-Ray Images",
+    "version": "0.1.0",
+    "random_seed": 42,
+    "deterministic": true
+  },
+  "dataset": {
+    "data_root": "data/chest_xray",
+    "manifests_dir": "data/manifests",
+    "manifest_files": {
+      "train": "train_manifest.csv",
+      "val": "val_manifest.csv",
+      "calibration": "calibration_manifest.csv",
+      "test": "test_manifest.csv",
+      "val_reference_16": "val_reference_16.csv",
+      "duplicates": "duplicates_manifest.csv"
+    },
+    "classes": {
+      "NORMAL": 0,
+      "PNEUMONIA": 1
+    },
+    "data_root_resolved": "D:\\Pneumonia_Detection\\data\\chest_xray",
+    "manifests_dir_resolved": "D:\\Pneumonia_Detection\\data\\manifests",
+    "resolved_manifest_paths": {
+      "train": "D:\\Pneumonia_Detection\\data\\manifests\\train_manifest.csv",
+      "val": "D:\\Pneumonia_Detection\\data\\manifests\\val_manifest.csv",
+      "calibration": "D:\\Pneumonia_Detection\\data\\manifests\\calibration_manifest.csv",
+      "test": "D:\\Pneumonia_Detection\\data\\manifests\\test_manifest.csv",
+      "val_reference_16": "D:\\Pneumonia_Detection\\data\\manifests\\val_reference_16.csv",
+      "duplicates": "D:\\Pneumonia_Detection\\data\\manifests\\duplicates_manifest.csv"
+    }
+  },
+  "preprocessing": {
+    "image_size": [
+      224,
+      224
+    ],
+    "channels": 3,
+    "color_mode": "RGB",
+    "normalization": {
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ]
+    },
+    "interpolation": "bicubic"
+  },
+  "augmentation": {
+    "train": {
+      "horizontal_flip_prob": 0.5,
+      "rotation_degrees": 10,
+      "affine_translate": [
+        0.05,
+        0.05
+      ],
+      "affine_scale": [
+        0.95,
+        1.05
+      ],
+      "color_jitter": {
+        "brightness": 0.1,
+        "contrast": 0.1
+      }
+    }
+  },
+  "dataloader": {
+    "batch_size": 32,
+    "num_workers": 0,
+    "pin_memory": true,
+    "shuffle": {
+      "train": true,
+      "val": false,
+      "calibration": false,
+      "test": false
+    },
+    "drop_last": {
+      "train": false,
+      "val": false
+    }
+  },
+  "system": {
+    "device": "cuda",
+    "mixed_precision": "fp16",
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true
+  },
+  "model": {
+    "architecture": "efficientnet_b0",
+    "pretrained": true,
+    "num_classes": 1,
+    "dropout_rate": 0.2,
+    "in_chans": 3
+  },
+  "training": {
+    "output_dir": "experiments/exp01_efficientnetb0_baseline",
+    "save_epoch_checkpoints": false,
+    "epochs": 15,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001,
+    "optimizer": "adamw",
+    "lr_scheduler": "cosine",
+    "min_lr": 1e-06,
+    "warmup_epochs": 1,
+    "early_stopping": {
+      "patience": 5,
+      "metric": "val_loss",
+      "mode": "min"
+    },
+    "loss": {
+      "name": "bce_with_logits",
+      "pos_weight": 1.0
+    }
+  }
+}

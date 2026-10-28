@@ -1,0 +1,218 @@
+{
+  "experiment": "exp03_full_validation_robustness",
+  "description": "Pre-specified single-factor sensitivity evaluation on the complete internal-validation split using the frozen EfficientNetB0 checkpoint.",
+  "n_validation_images": 518,
+  "threshold": 0.5,
+  "checkpoint": "experiments/exp01_efficientnetb0_baseline/best_model.pt",
+  "checkpoint_sha256": "44fd6e9f60c64ab729144139361f059526c520c1c81779fbe2e4cca903b726ba",
+  "model_state_sha256_before": "960467a90b7aa87be693751549bc3da7741578b017603b978e47e801ea572c8a",
+  "model_state_sha256_after": "960467a90b7aa87be693751549bc3da7741578b017603b978e47e801ea572c8a",
+  "model_state_unchanged": true,
+  "official_test_manifest_contents_or_images_read": false,
+  "calibration_manifest_contents_or_images_read": false,
+  "selection": "Every row in the existing val_manifest.csv, in manifest order.",
+  "conditions": {
+    "brightness_0.9": "Brightness factor 0.9, applied alone after resize.",
+    "brightness_1.1": "Brightness factor 1.1, applied alone after resize.",
+    "contrast_0.9": "Contrast factor 0.9, applied alone after resize.",
+    "contrast_1.1": "Contrast factor 1.1, applied alone after resize.",
+    "jpeg_quality_85": "RGB JPEG re-encoding at quality 85 after resize; decoded before normalization.",
+    "gamma_dark": "Existing pilot control: pixel^(1/0.85), applied after resize.",
+    "border_black": "OOD stress test only: outer 32-pixel border set to black after resize.",
+    "central_black": "OOD stress test only: central 156\u00d7156 square set to black after resize."
+  },
+  "condition_groups": {
+    "realistic_single_factor": [
+      "brightness_0.9",
+      "brightness_1.1",
+      "contrast_0.9",
+      "contrast_1.1",
+      "jpeg_quality_85"
+    ],
+    "photometric_control": [
+      "gamma_dark"
+    ],
+    "ood_mask_stress": [
+      "border_black",
+      "central_black"
+    ]
+  },
+  "preprocessing": "Conditions are applied to RGB after bicubic 224\u00d7224 resize, then the established evaluation transform applies ImageNet normalization.",
+  "baseline_confusion": {
+    "TN": 132,
+    "FP": 2,
+    "FN": 2,
+    "TP": 382
+  },
+  "results": {
+    "brightness_0.9": {
+      "n": 518,
+      "n_flip": 2,
+      "flip_rate": 0.003861003861003861,
+      "mean_abs_probability_change": 0.005370457540730638,
+      "median_abs_probability_change": 0.0,
+      "p95_abs_probability_change": 0.000545705825152254,
+      "max_abs_probability_change": 0.7761766314506531,
+      "by_ground_truth": {
+        "NORMAL": {
+          "n": 134,
+          "n_flip": 1,
+          "mean_abs_probability_change": 0.0067085190711481165
+        },
+        "PNEUMONIA": {
+          "n": 384,
+          "n_flip": 1,
+          "mean_abs_probability_change": 0.004903529819178705
+        }
+      }
+    },
+    "brightness_1.1": {
+      "n": 518,
+      "n_flip": 3,
+      "flip_rate": 0.005791505791505791,
+      "mean_abs_probability_change": 0.007310178241767415,
+      "median_abs_probability_change": 0.0,
+      "p95_abs_probability_change": 0.00030017495155334377,
+      "max_abs_probability_change": 0.7462637946009636,
+      "by_ground_truth": {
+        "NORMAL": {
+          "n": 134,
+          "n_flip": 0,
+          "mean_abs_probability_change": 0.0058887018925577374
+        },
+        "PNEUMONIA": {
+          "n": 384,
+          "n_flip": 3,
+          "mean_abs_probability_change": 0.007806214259460376
+        }
+      }
+    },
+    "contrast_0.9": {
+      "n": 518,
+      "n_flip": 1,
+      "flip_rate": 0.0019305019305019305,
+      "mean_abs_probability_change": 0.003372862809361689,
+      "median_abs_probability_change": 0.0,
+      "p95_abs_probability_change": 0.00012628900658455614,
+      "max_abs_probability_change": 0.6715407371520996,
+      "by_ground_truth": {
+        "NORMAL": {
+          "n": 134,
+          "n_flip": 0,
+          "mean_abs_probability_change": 0.003303797540848132
+        },
+        "PNEUMONIA": {
+          "n": 384,
+          "n_flip": 1,
+          "mean_abs_probability_change": 0.003396963710353399
+        }
+      }
+    },
+    "contrast_1.1": {
+      "n": 518,
+      "n_flip": 3,
+      "flip_rate": 0.005791505791505791,
+      "mean_abs_probability_change": 0.004308919324063585,
+      "median_abs_probability_change": 0.0,
+      "p95_abs_probability_change": 8.846233895383143e-05,
+      "max_abs_probability_change": 0.6794413179159164,
+      "by_ground_truth": {
+        "NORMAL": {
+          "n": 134,
+          "n_flip": 1,
+          "mean_abs_probability_change": 0.0026977208033464014
+        },
+        "PNEUMONIA": {
+          "n": 384,
+          "n_flip": 2,
+          "mean_abs_probability_change": 0.004871160474522185
+        }
+      }
+    },
+    "jpeg_quality_85": {
+      "n": 518,
+      "n_flip": 2,
+      "flip_rate": 0.003861003861003861,
+      "mean_abs_probability_change": 0.006202907650438571,
+      "median_abs_probability_change": 0.0,
+      "p95_abs_probability_change": 0.0013875693082809055,
+      "max_abs_probability_change": 0.7830906510353088,
+      "by_ground_truth": {
+        "NORMAL": {
+          "n": 134,
+          "n_flip": 0,
+          "mean_abs_probability_change": 0.007735934164702218
+        },
+        "PNEUMONIA": {
+          "n": 384,
+          "n_flip": 2,
+          "mean_abs_probability_change": 0.005667945273065318
+        }
+      }
+    },
+    "gamma_dark": {
+      "n": 518,
+      "n_flip": 1,
+      "flip_rate": 0.0019305019305019305,
+      "mean_abs_probability_change": 0.002946492901805153,
+      "median_abs_probability_change": 0.0,
+      "p95_abs_probability_change": 0.0001633376280778972,
+      "max_abs_probability_change": 0.5439428091049194,
+      "by_ground_truth": {
+        "NORMAL": {
+          "n": 134,
+          "n_flip": 0,
+          "mean_abs_probability_change": 0.0016895087472248674
+        },
+        "PNEUMONIA": {
+          "n": 384,
+          "n_flip": 1,
+          "mean_abs_probability_change": 0.0033851279974138984
+        }
+      }
+    },
+    "border_black": {
+      "n": 518,
+      "n_flip": 51,
+      "flip_rate": 0.09845559845559845,
+      "mean_abs_probability_change": 0.10512440750525463,
+      "median_abs_probability_change": 1.2516975402832031e-06,
+      "p95_abs_probability_change": 0.9784626359033138,
+      "max_abs_probability_change": 0.999965905064525,
+      "by_ground_truth": {
+        "NORMAL": {
+          "n": 134,
+          "n_flip": 49,
+          "mean_abs_probability_change": 0.38668005058566013
+        },
+        "PNEUMONIA": {
+          "n": 384,
+          "n_flip": 2,
+          "mean_abs_probability_change": 0.00687321955532146
+        }
+      }
+    },
+    "central_black": {
+      "n": 518,
+      "n_flip": 132,
+      "flip_rate": 0.2548262548262548,
+      "mean_abs_probability_change": 0.2533427177803917,
+      "median_abs_probability_change": 0.0,
+      "p95_abs_probability_change": 0.9999992244729206,
+      "max_abs_probability_change": 0.9999999999998812,
+      "by_ground_truth": {
+        "NORMAL": {
+          "n": 134,
+          "n_flip": 130,
+          "mean_abs_probability_change": 0.9601989563142863
+        },
+        "PNEUMONIA": {
+          "n": 384,
+          "n_flip": 2,
+          "mean_abs_probability_change": 0.006679342875334744
+        }
+      }
+    }
+  },
+  "interpretation": "Descriptive results for this internal-validation split only. No confidence intervals or population-level generalization claims are made. Black-mask results are OOD stress responses, not evidence of causal feature reliance. Brightness/contrast magnitudes match the existing training augmentation bounds; JPEG quality is a fixed compression stress condition."
+}

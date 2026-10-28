@@ -1,0 +1,94 @@
+{
+  "experiment": "exp05_validation_gradcam_faithfulness",
+  "n_validation_images": 518,
+  "checkpoint": "experiments/exp01_efficientnetb0_baseline/best_model.pt",
+  "checkpoint_sha256": "44fd6e9f60c64ab729144139361f059526c520c1c81779fbe2e4cca903b726ba",
+  "threshold": 0.5,
+  "target_class": "Each image's baseline predicted class; Grad-CAM is computed for the positive class logit or its negation, as appropriate.",
+  "replacement_baseline": "Gaussian-blurred resized RGB image, PIL blur radius 12, then the unchanged evaluation transform.",
+  "native_cam_grid": [
+    7,
+    7
+  ],
+  "curve_fractions": [
+    0.0,
+    0.1,
+    0.2,
+    0.30000000000000004,
+    0.4,
+    0.5,
+    0.6000000000000001,
+    0.7000000000000001,
+    0.8,
+    0.9,
+    1.0
+  ],
+  "random_control_repeats": 5,
+  "random_seed": 20261011,
+  "deletion": {
+    "cam_mean_auc": 0.8271572717283857,
+    "random_mean_auc": 0.8602951308410886,
+    "paired_mean_advantage": 0.03313785911270295,
+    "paired_mean_advantage_image_bootstrap_95pct_ci": [
+      0.02648739747914016,
+      0.04005176428895712
+    ],
+    "n": 518,
+    "NORMAL": {
+      "n": 134,
+      "cam_mean_auc": 0.3787046793462488,
+      "random_mean_auc": 0.48429806616440946,
+      "paired_mean_advantage": 0.10559338681816072,
+      "paired_mean_advantage_image_bootstrap_95pct_ci": [
+        0.08610581554450206,
+        0.12567190740200296
+      ]
+    },
+    "PNEUMONIA": {
+      "n": 384,
+      "cam_mean_auc": 0.9836485409450688,
+      "random_mean_auc": 0.9915024398688881,
+      "paired_mean_advantage": 0.007853898923819238,
+      "paired_mean_advantage_image_bootstrap_95pct_ci": [
+        0.004506025742463492,
+        0.01175502182977242
+      ]
+    }
+  },
+  "insertion": {
+    "cam_mean_auc": 0.9005981018694845,
+    "random_mean_auc": 0.8607426779880807,
+    "paired_mean_advantage": 0.039855423881403756,
+    "paired_mean_advantage_image_bootstrap_95pct_ci": [
+      0.031519381834487326,
+      0.048574917587604675
+    ],
+    "n": 518,
+    "NORMAL": {
+      "n": 134,
+      "cam_mean_auc": 0.6330234735092122,
+      "random_mean_auc": 0.48637425026401115,
+      "paired_mean_advantage": 0.1466492232452008,
+      "paired_mean_advantage_image_bootstrap_95pct_ci": [
+        0.12205865538427645,
+        0.16860596807099407
+      ]
+    },
+    "PNEUMONIA": {
+      "n": 384,
+      "cam_mean_auc": 0.9939704982243711,
+      "random_mean_auc": 0.9913816605792926,
+      "paired_mean_advantage": 0.002588837645078758,
+      "paired_mean_advantage_image_bootstrap_95pct_ci": [
+        0.0004561849988817413,
+        0.005101550146061342
+      ]
+    }
+  },
+  "interpretation": "Deletion advantage is random-control AUC minus Grad-CAM AUC; insertion advantage is Grad-CAM AUC minus random-control AUC. Positive values indicate better ranking than the sampled random controls under this blur-replacement protocol, not causal proof or lesion localization. The mask replacement can still create distribution shift. Confidence intervals resample images and do not account for patient clustering.",
+  "model_state_sha256_before": "960467a90b7aa87be693751549bc3da7741578b017603b978e47e801ea572c8a",
+  "model_state_sha256_after": "960467a90b7aa87be693751549bc3da7741578b017603b978e47e801ea572c8a",
+  "model_state_unchanged": true,
+  "official_test_manifest_contents_or_images_read": false,
+  "calibration_manifest_contents_or_images_read": false
+}
