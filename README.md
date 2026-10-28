@@ -1,13 +1,30 @@
-# Explainable Pneumonia Detection
+# Explainable Pneumonia Detection from Chest X-Rays
 
-A local research and educational demonstration of the existing EfficientNetB0
-chest X-ray baseline, its Grad-CAM visual explanations, and completed
-validation-only experiments. The application is not for clinical diagnosis or
-treatment.
+A rigorous, open, and reproducible research platform for chest X-ray classification and
+post-hoc explainability auditing. The system classifies radiographs as **NORMAL** or
+**PNEUMONIA** using a frozen EfficientNetB0 checkpoint and pairs every prediction with a
+mathematically audited **Grad-CAM** visual explanation. It is not intended for clinical
+diagnosis or treatment.
+
+## Research context
+
+The project investigates whether Grad-CAM activation patterns of a high-performing
+classifier are spatially consistent with clinically expected localization, or whether they
+are confounded by peripheral image features. Two complementary analyses are performed:
+
+- **Exp 2A -- Native-resolution Grad-CAM audit**: Activation patterns for 16 stratified
+  validation cases are decomposed on the raw 7x7 conv_head grid. Border-to-inner ratios
+  are computed without epsilon patching; undefined ratios (zero inner activation) are
+  reported as NaN.
+- **Exp 2B -- Controlled spatial perturbation pilot**: Area-matched border and central
+  blackout conditions (24,576 px vs. 24,336 px, within 0.98%) are applied to the same 16
+  cases. Perturbation parameters were pre-committed before any results were examined.
+
+Full results, methodology, and limitations are described in `project_description.md`.
 
 ## Run the local web UI
 
-From the project root, use the project's virtual environment:
+From the project root, activate the virtual environment and start the server:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
@@ -15,51 +32,72 @@ python -m pip install -r requirements.txt
 python -m uvicorn api.main:app --host 127.0.0.1 --port 8000
 ```
 
-Open `http://127.0.0.1:8000/` for X-ray analysis and
-`http://127.0.0.1:8000/experiments.html` for the saved experiment results.
-Alternatively, run `python app.py` from the project root to start the same
-local server. The browser UI is plain HTML, CSS, and JavaScript served by
-FastAPI. The API uses the existing inference and Grad-CAM implementation and
-frozen `experiments/exp01_efficientnetb0_baseline/best_model.pt` checkpoint.
-Uploaded images are limited to 15 MiB, processed in memory, and never saved
-or transmitted externally. The web results read only the saved Experiment 1,
-2A, and 2B artifacts; no test or calibration split is loaded.
+Alternatively run `python app.py` from the project root to start the same server.
 
-PyTorch and torchvision are intentionally installed separately; follow the
-CUDA/CPU instructions at the top of `requirements.txt` if they are not already
-available in the environment.
+| URL | Contents |
+|-----|----------|
+| `http://127.0.0.1:8000/` | Live upload, prediction, and Grad-CAM explanation |
+| `http://127.0.0.1:8000/experiments.html` | Saved Exp 1, 2A, 2B results and audit galleries |
 
-## Verify
+PyTorch and torchvision are intentionally excluded from `requirements.txt`. Install them
+separately using the CUDA or CPU index URL shown at the top of that file.
+
+Uploaded images are limited to 15 MiB, processed entirely in memory, and never saved or
+transmitted externally. The experiments page reads only pre-saved artifacts from Exp 01,
+02A, and 02B; no test or calibration split is loaded at runtime.
+
+## Run the test suite
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests -q
 ```
 
-The web/API tests exercise image validation, prediction and Grad-CAM, static
-navigation, and artifact-backed result payloads using synthetic images where
-practical. They do not run training or load the calibration or official test
-splits.
+The suite covers 11 test modules (175 collected functions) exercising:
+- EfficientNetB0 model construction and forward pass
+- Grad-CAM correctness (ReLU order, native 7x7 output, normalization)
+- Numerical audit replication to float32 precision (all 16 cases)
+- Sensitivity pilot perturbation pipeline and result verification
+- Data pipeline, manifest loading, and leakage checks
+- In-memory upload validation and FastAPI prediction/Grad-CAM endpoints
+- Calibration, MC-dropout uncertainty, validation robustness, and faithfulness modules
+- Artifact-backed experiment visualization API endpoints
+
+Note: `test_ui_integration.py` has a known import issue (`read_json_artifact` from
+`app`) that causes a collection error; the remaining 175 tests collect and run normally.
+Tests do not perform training or load the calibration or official test splits.
 
 ## Scope and limitations
 
-The application displays binary NORMAL/PNEUMONIA predictions at the existing
-0.5 threshold, the native 7 × 7 Grad-CAM grid, its upsampled display, and an
-overlay. The displayed probability is not necessarily calibrated. Grad-CAM
-does not establish causal evidence or segment anatomy. The bounded
-16-example sensitivity pilot is exploratory; a separate full-validation
-robustness analysis keeps black masking distinct as an out-of-distribution
-stress test. A small post-hoc temperature-scaling and MC-dropout audit is
-available, but it does not establish clinical calibration or reliable
-uncertainty. Filename-derived patient-token limitations mean
-patient-independent and clinical generalization are not established.
+**Classifier**: Binary NORMAL/PNEUMONIA predictions at a fixed 0.5 threshold using
+`experiments/exp01_efficientnetb0_baseline/best_model.pt` (Epoch 8, val AUC=0.9997,
+sensitivity=99.48%, specificity=98.51%, n=518).
 
-The Grad-CAM deletion/insertion faithfulness audit is available in
-`experiments/exp05_explanation_faithfulness/`. It compares attribution-ranked
-regions with random controls under a blurred-image replacement protocol; it
-does not establish lesion localization. An evaluator for expert-annotated
-validation masks is prepared in `experiments/exp06_expert_localization/`, but
-no expert masks are currently supplied and no localization results are
-claimed.
+**Grad-CAM**: Native 7x7 grid produced by hooking `backbone.conv_head`. ReLU is applied
+before bicubic upsampling to 224x224. Activations reflect model correlations; they do not
+constitute causal evidence or anatomical segmentation.
 
-New architectures, retraining, external/clinical validation, and additional
-robustness experiments are outside the current scope.
+**Pilot scale (n=16)**: Exp 2A and 2B results are based on a stratified but non-random
+subset and must not be generalised to the full validation set or beyond.
+
+**OOD perturbations**: Large black masks (border or central) used in Exp 2B and Exp 3 do
+not correspond to any image type in the training distribution. Model responses cannot be
+interpreted as principled feature attributions.
+
+**Calibration and uncertainty (Exp 04)**: Temperature scaling (T=2.860) and MC-dropout
+(50 passes) are audited on an internal calibration partition only. These results do not
+establish clinical-grade calibration or distribution-free coverage guarantees.
+
+**Faithfulness audit (Exp 05)**: Deletion and insertion curves use a Gaussian-blurred
+replacement; they confirm model-level faithfulness under the stated protocol and do not
+establish lesion localization.
+
+**Expert localization (Exp 06)**: The evaluation framework and `annotations_manifest_template.csv`
+are implemented, but no expert masks are currently available and no localization results
+are claimed.
+
+**Single site and single model**: All images originate from Guangzhou Women and Children's
+Medical Center. Findings may not transfer to other institutions, patient demographics,
+acquisition protocols, or model architectures.
+
+New architectures, retraining, external/clinical validation, and additional robustness
+experiments are outside the current scope.

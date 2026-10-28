@@ -1,11 +1,5 @@
 # Explainable Pneumonia Detection from Chest X-Rays: A Quantitative Grad-CAM Audit and Spatial Sensitivity Analysis
 
-> **Research Focus**: Experiments 1 through 2B — Baseline Classification + Grad-CAM Spatial Audit + Perturbation Sensitivity Pilot
-> **Target Venue**: High-impact Scopus-indexed conference or journal in medical AI, explainable AI, or clinical decision support
-> **Status**: Research-complete through Exp 2B; ready for paper construction
-
----
-
 ## 1. Research Overview
 
 This project investigates **whether the activation patterns of a high-performing chest X-ray classifier (EfficientNetB0) are spatially consistent with clinically expected localization**, and whether those patterns are genuinely anchored in lung parenchyma or confounded by peripheral image features.
